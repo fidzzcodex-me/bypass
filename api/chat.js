@@ -2,16 +2,35 @@ const ORIGIN = "https://app.blackbox.ai";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0";
 const FALLBACK_VALIDATED = "a38f5889-8fef-46d4-8ede-bf4668b6a9bb";
 const ANCHOR = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})";function detectVscode/;
-const WRAP_SYSTEM = "Wrap your entire reply between <answer> and </answer> tags. Write nothing outside these tags.";
-const OPEN_TAG = /^(?:<answer>|answer>|nswer>|swer>|wer>|er>|r>|>)\s*/;
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
+
+// System prompt — instruksikan AI untuk format file dengan benar
+const SYSTEM = `You are a helpful AI assistant. 
+When asked to create, generate, or write a file, ALWAYS format it like this:
+\`\`\`extension
+// filename: filename.extension
+(file content here)
+\`\`\`
+For example:
+\`\`\`html
+// filename: index.html
+<!DOCTYPE html>...
+\`\`\`
+Or for Python:
+\`\`\`py
+// filename: script.py
+print("hello")
+\`\`\`
+This format allows the file to be saved automatically as an artifact.
+Wrap your entire reply between <answer> and </answer> tags. Write nothing outside these tags.`;
+
+const OPEN_TAG = /^(?:<answer>|answer>|nswer>|swer>|wer>|er>|r>|>)\s*/;
 
 let cachedValidated = FALLBACK_VALIDATED;
 
 function randomId(len = 7) {
   const c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let s = "";
-  for (let i = 0; i < len; i++) s += c[Math.floor(Math.random() * c.length)];
+  let s = ""; for (let i = 0; i < len; i++) s += c[Math.floor(Math.random() * c.length)];
   return s;
 }
 
@@ -37,22 +56,6 @@ async function fetchValidated() {
   return found.find(Boolean) || null;
 }
 
-function buildPayload(messages, validated, options = {}) {
-  const { webSearch = false, agent = "VscodeAgent", maxTokens = 1024 } = options;
-  return {
-    messages,
-    id: messages[messages.length - 1].id,
-    userSelectedAgent: agent,
-    userSelectedModel: null,
-    maxTokens,
-    validated,
-    clickedForceWebSearch: webSearch,
-    webSearchModeOption: { autoMode: !webSearch, webMode: webSearch, offlineMode: false },
-    codeModelMode: true,
-    isPremium: false
-  };
-}
-
 async function doRequest(payload) {
   const res = await fetch(`${ORIGIN}/api/chat`, {
     method: "POST",
@@ -71,26 +74,37 @@ module.exports = async (req, res) => {
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
   const userMsg = { id: randomId(), role: "user", content: String(prompt) };
-  const wrapped = [{ id: randomId(), role: "system", content: WRAP_SYSTEM }, ...history, userMsg];
+  const sysMsg = { id: randomId(), role: "system", content: SYSTEM };
+  const wrapped = [sysMsg, ...history, userMsg];
+
+  const payload = {
+    messages: wrapped,
+    id: userMsg.id,
+    userSelectedAgent: "VscodeAgent",
+    userSelectedModel: null,
+    maxTokens: 2048,
+    validated: cachedValidated,
+    clickedForceWebSearch: webSearch,
+    webSearchModeOption: { autoMode: !webSearch, webMode: webSearch, offlineMode: false },
+    codeModelMode: true,
+    isPremium: false
+  };
 
   try {
-    let raw = await doRequest(buildPayload(wrapped, cachedValidated, { webSearch }));
-
+    let raw = await doRequest(payload);
     if (isRejected(raw)) {
       const fresh = await fetchValidated();
       if (fresh && fresh !== cachedValidated) {
         cachedValidated = fresh;
-        raw = await doRequest(buildPayload(wrapped, cachedValidated, { webSearch }));
+        payload.validated = cachedValidated;
+        raw = await doRequest(payload);
       }
     }
-
-    if (isRejected(raw)) return res.status(502).json({ ok: false, error: "Blackbox rejected request" });
+    if (isRejected(raw)) return res.status(502).json({ ok: false, error: "Blackbox rejected" });
 
     const { text, think } = parseAnswer(raw);
     return res.status(200).json({
-      ok: true,
-      text,
-      think,
+      ok: true, text, think,
       history: [...history, userMsg, { id: randomId(), role: "assistant", content: text }]
     });
   } catch (err) {
