@@ -79,18 +79,19 @@ nav{
 }
 .sidebar.hidden{transform:translateX(calc(-1 * var(--sidebar-w)))}
 
-.sb-top{padding:.85rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.sb-top-label{font-size:.63rem;font-weight:700;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:0}
-.sb-nav{padding:.5rem .6rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.sb-item{
+.sb-header{padding:.85rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-header-label{font-size:.63rem;font-weight:700;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:.5rem}
+.sb-nav{padding:.6rem .65rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-nav-item{
   display:flex;align-items:center;gap:8px;width:100%;
   padding:8px 10px;border-radius:8px;font-size:.79rem;font-weight:500;
   color:var(--text2);text-decoration:none;cursor:pointer;background:none;border:none;
   transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px;
 }
-.sb-item:hover{background:var(--blue-50);color:var(--blue-600)}
-.sb-item.active{background:var(--blue-50);color:var(--blue-600);font-weight:600}
-.sb-item svg{flex-shrink:0}
+.sb-nav-item:hover{background:var(--blue-50);color:var(--blue-600)}
+.sb-nav-item.active{background:var(--blue-50);color:var(--blue-600);font-weight:600}
+.sb-nav-item svg{flex-shrink:0;color:inherit}
+.sb-section-label{font-size:.63rem;font-weight:700;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;padding:0 4px;margin-bottom:.4rem;margin-top:.5rem}
 .sb-footer{padding:.65rem .75rem;margin-top:auto;border-top:1px solid var(--border);flex-shrink:0}
 .sb-footer-label{font-size:.63rem;color:var(--text3);text-align:center}
 .sb-footer-label a{color:var(--blue-500);text-decoration:none}
@@ -208,27 +209,28 @@ footer a{color:var(--blue-500);text-decoration:none}
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sb-top">
-    <div class="sb-top-label">Menu</div>
+  <div class="sb-header">
+    <div class="sb-header-label">Menu</div>
   </div>
-  <nav class="sb-nav">
-    <a class="sb-item active" href="/">
+  <div class="sb-nav">
+    <a class="sb-nav-item active" href="/">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
       Bypass Link
     </a>
-    <a class="sb-item" href="/chat">
+    <a class="sb-nav-item" href="/chat">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       Chat AI
     </a>
-    <a class="sb-item" href="/status">
+    <a class="sb-nav-item" href="/status">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
       Status
     </a>
-    <a class="sb-item" href="/docs">
+    <a class="sb-nav-item" href="/docs">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       API Docs
     </a>
-  </nav>
+  </div>
+  <div style="flex:1"></div>
   <div class="sb-footer">
     <div class="sb-footer-label">by <a href="https://github.com/fidzzcodex" target="_blank">fidzzcodex</a></div>
   </div>
