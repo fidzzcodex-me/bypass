@@ -71,27 +71,27 @@ nav{
 /* SIDEBAR */
 .sidebar{
   width:var(--sidebar-w);flex-shrink:0;
-  position:fixed;top:var(--nav-h);left:0;bottom:0;
+  position:fixed;top:var(--nav-h);left:0;bottom:0;z-index:150;
   background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;z-index:150;
+  display:flex;flex-direction:column;
   transition:transform .25s cubic-bezier(.4,0,.2,1),background .25s,border-color .25s;
-  overflow:hidden;
+  overflow:hidden;transform:translateX(0);
 }
 .sidebar.hidden{transform:translateX(calc(-1 * var(--sidebar-w)))}
 
-.sb-top{padding:1rem 1rem .75rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.sb-top-label{font-size:.63rem;font-weight:700;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:.6rem}
-.sb-nav{padding:.6rem .75rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-top{padding:.85rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-top-label{font-size:.63rem;font-weight:700;color:var(--text3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:0}
+.sb-nav{padding:.5rem .6rem;border-bottom:1px solid var(--border);flex-shrink:0}
 .sb-item{
   display:flex;align-items:center;gap:8px;width:100%;
-  padding:8px 10px;border-radius:8px;font-size:.8rem;font-weight:500;
+  padding:8px 10px;border-radius:8px;font-size:.79rem;font-weight:500;
   color:var(--text2);text-decoration:none;cursor:pointer;background:none;border:none;
   transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px;
 }
 .sb-item:hover{background:var(--blue-50);color:var(--blue-600)}
 .sb-item.active{background:var(--blue-50);color:var(--blue-600);font-weight:600}
 .sb-item svg{flex-shrink:0}
-.sb-footer{padding:.75rem;margin-top:auto;border-top:1px solid var(--border);flex-shrink:0}
+.sb-footer{padding:.65rem .75rem;margin-top:auto;border-top:1px solid var(--border);flex-shrink:0}
 .sb-footer-label{font-size:.63rem;color:var(--text3);text-align:center}
 .sb-footer-label a{color:var(--blue-500);text-decoration:none}
 
@@ -174,8 +174,8 @@ footer a{color:var(--blue-500);text-decoration:none}
 
 @media(max-width:768px){
   .sidebar{transform:translateX(calc(-1 * var(--sidebar-w)))}
-  .sidebar.open{transform:translateX(0)}
-  .sidebar.hidden{transform:translateX(calc(-1 * var(--sidebar-w)))}
+  .sidebar.open{transform:translateX(0) !important}
+  .sidebar.hidden{transform:translateX(calc(-1 * var(--sidebar-w))) !important}
   .main{margin-left:0 !important}
 }
 @media(max-width:600px){
